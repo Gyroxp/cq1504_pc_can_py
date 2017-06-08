@@ -28,6 +28,7 @@ while True:
       exit = 1
       break
     if case('s'):
+      mycan.startCAN()
       break
     if case():
       print "command else!\n"
