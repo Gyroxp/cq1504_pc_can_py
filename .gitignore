@@ -1,3 +1,18 @@
+
+.classpath
+.project
+.pydevproject
+.settings
+
+vs/
+build/
+dist/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
 # PyCharm
 # http://www.jetbrains.com/pycharm/webhelp/project.html
 .idea
