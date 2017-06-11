@@ -100,14 +100,21 @@ class MainDlg(QDialog, ui_main.Ui_dlgMain):
   def on_pushBtn_startCAN_clicked(self):
     self.__Chn = self.cmb_Chn.currentIndex()
 
-    initcfg = ControlCAN.VCI_INIT_CONFIG()  #AccCode=0, AccMask=0xFFFFFFFF, Reserved=0, Filter=1, Timing0=0, Timing1=0x1c, Mode=2)
-    initcfg.AccCode = 0
-    initcfg.AccMask = 0xFFFFFFFF
+    qs = self.lineEdit_AccCode.text();  qs = qs.toUInt(16);  AccCode = qs[0];
+    qs = self.lineEdit_AccMask.text();  qs = qs.toUInt(16);  AccMask = qs[0];
+    qs = self.lineEdit_Time0.text();    qs = qs.toUInt(16);  time0   = qs[0];
+    qs = self.lineEdit_Time1.text();    qs = qs.toUInt(16);  time1   = qs[0];
+    filter = self.cmb_Filter.currentIndex() + 1
+    mode   = self.cmb_Mode.currentIndex()
+
+    initcfg = ControlCAN.VCI_INIT_CONFIG()
+    initcfg.AccCode  = AccCode
+    initcfg.AccMask  = AccMask
     initcfg.Reserved = 0
-    initcfg.Filter  = 0
-    initcfg.Timing0 = 0
-    initcfg.Timing1 = 0x1C
-    initcfg.Mode    = 2
+    initcfg.Filter   = filter
+    initcfg.Timing0  = time0
+    initcfg.Timing1  = time1
+    initcfg.Mode     = mode
     err = self.__USBCAN.VCI_InitCAN(self.__devType, self.__devIdx, self.__Chn, ctypes.addressof(initcfg))
     if err == 1:
       self.__USBCAN.VCI_StartCAN(self.__devType, self.__devIdx, self.__Chn)
@@ -121,7 +128,7 @@ class MainDlg(QDialog, ui_main.Ui_dlgMain):
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   @pyqtSlot()
   def on_pushBtn_txdata_clicked(self):
-    canobj = ControlCAN.VCI_CAN_OBJ()  #ID=8, TimeStamp=0, TimeFlag=0, SendType=0, RemoteFlag=0, ExternFlag=0, DataLen=8, Data='1234567')
+    canobj = ControlCAN.VCI_CAN_OBJ()
     canobj.ID = 88
     #canobj.TimeStamp
     #canobj.TimeFlag
