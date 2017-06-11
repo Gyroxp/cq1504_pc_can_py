@@ -2,14 +2,13 @@
 
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
-import sys
-import ui_main
 
-#import binascii
-#import array
+import sys
 import threading
 import struct
 import ctypes
+import re
+import ui_main
 import ControlCAN
 
 class MainDlg(QDialog, ui_main.Ui_dlgMain):
@@ -49,7 +48,16 @@ class MainDlg(QDialog, ui_main.Ui_dlgMain):
     self.cmb_Mode.addItem(u"自测")
     self.cmb_Mode.setCurrentIndex(0)
 
+    self.cmb_FrameType.addItem(u"标准帧")
+    self.cmb_FrameType.addItem(u"扩展帧")
+    self.cmb_FrameType.setCurrentIndex(0)
+
+    self.cmb_FrameFormat.addItem(u"数据帧")
+    self.cmb_FrameFormat.addItem(u"远程帧")
+    self.cmb_FrameFormat.setCurrentIndex(0)
+
     self.pushBtn_startCAN.setDisabled(1)
+    self.pushBtn_txdata.setDisabled(1)
 
     try:
       self.__USBCAN = ctypes.windll.LoadLibrary(".\ControlCAN.dll")
@@ -78,12 +86,12 @@ class MainDlg(QDialog, ui_main.Ui_dlgMain):
       self.__devIdx = self.cmb_devIndex.currentIndex()
       err = self.__USBCAN.VCI_OpenDevice(self.__devType, self.__devIdx, 0)
       if err == 1:
-         #QMessageBox.information(self, u"恭喜",  u"连接成功!")
-         self.cmb_devType.setDisabled(1)
-         self.cmb_devIndex.setDisabled(1)
-         self.cmb_Chn.setDisabled(1)
-         self.pushBtn_startCAN.setDisabled(0)
-         self.pushBtn_connect.setText(u'关闭')
+        #QMessageBox.information(self, u"恭喜",  u"连接成功!")
+        self.cmb_devType.setDisabled(1)
+        self.cmb_devIndex.setDisabled(1)
+        self.cmb_Chn.setDisabled(1)
+        self.pushBtn_startCAN.setDisabled(0)
+        self.pushBtn_connect.setText(u'关闭')
       else:
         QMessageBox.information(self, u"错误",  u"找不到设备")
 
@@ -93,6 +101,7 @@ class MainDlg(QDialog, ui_main.Ui_dlgMain):
       self.cmb_devIndex.setDisabled(0)
       self.cmb_Chn.setDisabled(0)
       self.pushBtn_startCAN.setDisabled(1)
+      self.pushBtn_txdata.setDisabled(1)
       self.pushBtn_connect.setText(u'连接')
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -118,6 +127,7 @@ class MainDlg(QDialog, ui_main.Ui_dlgMain):
     err = self.__USBCAN.VCI_InitCAN(self.__devType, self.__devIdx, self.__Chn, ctypes.addressof(initcfg))
     if err == 1:
       self.__USBCAN.VCI_StartCAN(self.__devType, self.__devIdx, self.__Chn)
+      self.pushBtn_txdata.setDisabled(0)
       self.__timer = threading.Timer(0.1, self.can_rx)
       self.__timer.start()
     elif err == 0:
@@ -126,27 +136,91 @@ class MainDlg(QDialog, ui_main.Ui_dlgMain):
       QMessageBox.information(self, u"错误",  u"设备不存在")
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  @pyqtSlot(str)
+  def on_lineEdit_AccCode_textChanged(self, s):
+    if self.pushBtn_connect.text() == u'关闭':
+      self.on_pushBtn_startCAN_clicked()
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  @pyqtSlot(str)
+  def on_lineEdit_AccMask_textChanged(self, s):
+    if self.pushBtn_connect.text() == u'关闭':
+      self.on_pushBtn_startCAN_clicked()
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  @pyqtSlot(str)
+  def on_lineEdit_Time0_textChanged(self, s):
+    if self.pushBtn_connect.text() == u'关闭':
+      self.on_pushBtn_startCAN_clicked()
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  @pyqtSlot(str)
+  def on_lineEdit_Time1_textChanged(self, s):
+    if self.pushBtn_connect.text() == u'关闭':
+      self.on_pushBtn_startCAN_clicked()
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  @pyqtSlot(int)
+  def on_cmb_Filter_currentIndexChanged(self, i):
+    if self.pushBtn_connect.text() == u'关闭':
+      self.on_pushBtn_startCAN_clicked()
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  @pyqtSlot(int)
+  def on_cmb_Mode_currentIndexChanged(self, i):
+    if self.pushBtn_connect.text() == u'关闭':
+      self.on_pushBtn_startCAN_clicked()
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   @pyqtSlot()
   def on_pushBtn_txdata_clicked(self):
+    type   = self.cmb_FrameType.currentIndex()
+    format = self.cmb_FrameFormat.currentIndex()
+    qs = self.lineEdit_ID.text();   qs = qs.toUInt(16);  ID = qs[0];
+    
+    qs = self.lineEdit_Data.text();
+    qs = qs.toLatin1()
+    s  = ""
+    for i in qs: s += i
+    s = s.strip()            #去除前后空格
+    t = re.split("\\s+", s)
+    sz = len(t)
+    if sz > 8: sz = 8
+    data = (ctypes.c_ubyte * 8)()
+    for i in range(sz):
+      data[i] = int(t[i], 16)
+
     canobj = ControlCAN.VCI_CAN_OBJ()
-    canobj.ID = 88
+    canobj.ID = ID
     #canobj.TimeStamp
     #canobj.TimeFlag
     #canobj.SendType
-    canobj.RemoteFlag = 0    #1 远程 0 数据
-    canobj.ExternFlag = 0    #1 扩展 0 标准
-    canobj.DataLen = 4
-    canobj.Data = "2345"
+    canobj.RemoteFlag = format  #1 远程 0 数据
+    canobj.ExternFlag = type    #1 扩展 0 标准
+    canobj.DataLen    = sz
+    canobj.Data       = data
     frameNum = self.__USBCAN.VCI_Transmit(self.__devType, self.__devIdx, self.__Chn, ctypes.addressof(canobj), 1)
     if frameNum == -1:
       QMessageBox.information(self, u"错误",  u"设备错误")
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  @pyqtSlot()
+  def on_pushBtn_clr_clicked(self):
+    self.textEdit_recv.clear()
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   def can_rx(self):
     rxobj = ControlCAN.VCI_CAN_OBJ()
     res = self.__USBCAN.VCI_Receive(self.__devType, self.__devIdx, self.__Chn, ctypes.addressof(rxobj), 1000, 100);
     if res > 0:
-      print res
+      #print res
+      dl     = rxobj.DataLen;
+      type   = rxobj.ExternFlag;  type   = (type==0)   and (u'标准帧') or (u'扩展帧')
+      format = rxobj.RemoteFlag;  format = (format==0) and (u'数据帧') or (u'远程帧')
+      id     = rxobj.ID
+      rx = 'ID: 0x' + ("%02X" %(id)) + ' ' + type + ' ' + format + ' ' + str(dl) + 'B:  '
+
+      data = rxobj.Data
+      s = ""
+      for i in range(dl):
+        s += "%02X " %(data[i])
+
+      self.textEdit_recv.insertPlainText(rx + s + '\r\n')
 
     self.__timer = threading.Timer(0.1, self.can_rx)
     self.__timer.start()

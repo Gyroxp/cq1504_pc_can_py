@@ -19,13 +19,13 @@ class VCI_CAN_OBJ(Structure):
   _fields_ = [
   ("ID",          c_uint),
   ("TimeStamp",   c_uint),
-  ("TimeFlag",    c_byte),
-  ("SendType",    c_byte),
-  ("RemoteFlag",  c_byte),
-  ("ExternFlag",  c_byte),
-  ("DataLen",     c_byte),
-  ("Data",        c_char * 8),
-  ("Reserved",    c_byte * 3)
+  ("TimeFlag",    c_ubyte),
+  ("SendType",    c_ubyte),
+  ("RemoteFlag",  c_ubyte),
+  ("ExternFlag",  c_ubyte),
+  ("DataLen",     c_ubyte),
+  ("Data",        c_ubyte * 8),
+  ("Reserved",    c_ubyte * 3)
   ]
 
 class VCI_CAN_STATUS(Structure):

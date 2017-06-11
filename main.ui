@@ -18,7 +18,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>541</width>
+     <width>531</width>
      <height>41</height>
     </rect>
    </property>
@@ -114,8 +114,8 @@
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>206</x>
-     <y>300</y>
+     <x>556</x>
+     <y>20</y>
      <width>48</width>
      <height>16</height>
     </rect>
@@ -127,8 +127,8 @@
   <widget class="QLabel" name="label_4">
    <property name="geometry">
     <rect>
-     <x>399</x>
-     <y>300</y>
+     <x>698</x>
+     <y>20</y>
      <width>36</width>
      <height>16</height>
     </rect>
@@ -140,9 +140,9 @@
   <widget class="QLineEdit" name="lineEdit_GPID">
    <property name="geometry">
     <rect>
-     <x>441</x>
-     <y>300</y>
-     <width>133</width>
+     <x>740</x>
+     <y>20</y>
+     <width>31</width>
      <height>20</height>
     </rect>
    </property>
@@ -150,22 +150,22 @@
     <string>1</string>
    </property>
   </widget>
-  <widget class="QTextEdit" name="textEdit_status">
+  <widget class="QTextEdit" name="textEdit_recv">
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>390</y>
-     <width>801</width>
-     <height>91</height>
+     <y>260</y>
+     <width>531</width>
+     <height>221</height>
     </rect>
    </property>
   </widget>
   <widget class="QLineEdit" name="lineEdit_TCID">
    <property name="geometry">
     <rect>
-     <x>260</x>
-     <y>300</y>
-     <width>133</width>
+     <x>610</x>
+     <y>20</y>
+     <width>71</width>
      <height>20</height>
     </rect>
    </property>
@@ -173,11 +173,11 @@
     <string>05050605</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushBtn_clrStatus">
+  <widget class="QPushButton" name="pushBtn_clr">
    <property name="geometry">
     <rect>
-     <x>720</x>
-     <y>360</y>
+     <x>450</x>
+     <y>230</y>
      <width>75</width>
      <height>23</height>
     </rect>
@@ -241,7 +241,7 @@
   <widget class="QLineEdit" name="lineEdit_Time0">
    <property name="geometry">
     <rect>
-     <x>228</x>
+     <x>230</x>
      <y>70</y>
      <width>31</width>
      <height>20</height>
@@ -354,7 +354,7 @@
     <rect>
      <x>0</x>
      <y>50</y>
-     <width>541</width>
+     <width>531</width>
      <height>80</height>
     </rect>
    </property>
@@ -368,17 +368,147 @@
     <number>1</number>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushBtn_txdata">
+  <widget class="QFrame" name="frame_4">
    <property name="geometry">
     <rect>
-     <x>450</x>
-     <y>170</y>
-     <width>75</width>
-     <height>23</height>
+     <x>0</x>
+     <y>140</y>
+     <width>531</width>
+     <height>80</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Plain</enum>
+   </property>
+   <property name="lineWidth">
+    <number>1</number>
+   </property>
+   <widget class="QLabel" name="label_12">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>12</y>
+      <width>48</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>帧类型</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="cmb_FrameType">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>10</y>
+      <width>69</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="cmb_FrameFormat">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>10</y>
+      <width>69</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit_ID">
+    <property name="geometry">
+     <rect>
+      <x>360</x>
+      <y>10</y>
+      <width>80</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>123</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_13">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>12</y>
+      <width>48</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>帧格式</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_14">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>12</y>
+      <width>48</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>帧ID: 0x</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushBtn_txdata">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>50</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>发送</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit_Data">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>50</y>
+      <width>381</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>00 01 02 03 04 05 06 07</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_15">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>50</y>
+      <width>48</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>数据</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QLabel" name="label_16">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>240</y>
+     <width>91</width>
+     <height>16</height>
     </rect>
    </property>
    <property name="text">
-    <string>发送</string>
+    <string>接收到的数据</string>
    </property>
   </widget>
   <zorder>frame_3</zorder>
@@ -387,8 +517,8 @@
   <zorder>label_4</zorder>
   <zorder>lineEdit_GPID</zorder>
   <zorder>lineEdit_TCID</zorder>
-  <zorder>textEdit_status</zorder>
-  <zorder>pushBtn_clrStatus</zorder>
+  <zorder>textEdit_recv</zorder>
+  <zorder>pushBtn_clr</zorder>
   <zorder>lineEdit_AccCode</zorder>
   <zorder>label_6</zorder>
   <zorder>lineEdit_AccMask</zorder>
@@ -402,14 +532,14 @@
   <zorder>cmb_Filter</zorder>
   <zorder>cmb_Mode</zorder>
   <zorder>pushBtn_startCAN</zorder>
-  <zorder>frame_2</zorder>
-  <zorder>pushBtn_txdata</zorder>
+  <zorder>frame_4</zorder>
+  <zorder>label_16</zorder>
  </widget>
  <tabstops>
   <tabstop>pushBtn_connect</tabstop>
   <tabstop>lineEdit_TCID</tabstop>
   <tabstop>lineEdit_GPID</tabstop>
-  <tabstop>textEdit_status</tabstop>
+  <tabstop>textEdit_recv</tabstop>
  </tabstops>
  <resources/>
  <connections/>
