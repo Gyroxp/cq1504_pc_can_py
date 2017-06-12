@@ -75,6 +75,7 @@ class MainDlg(QDialog, ui_main.Ui_dlgMain):
 
     self.pushBtn_startCAN.setDisabled(1)
     self.pushBtn_txdata.setDisabled(1)
+    self.pushBtn_startJump.setDisabled(1)
 
     try:
       self.__USBCAN = ctypes.windll.LoadLibrary(".\ControlCAN.dll")
@@ -120,6 +121,7 @@ class MainDlg(QDialog, ui_main.Ui_dlgMain):
       self.cmb_Chn.setDisabled(0)
       self.pushBtn_startCAN.setDisabled(1)
       self.pushBtn_txdata.setDisabled(1)
+      self.pushBtn_startJump.setDisabled(1)
       self.pushBtn_connect.setText(u'连接')
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -146,6 +148,7 @@ class MainDlg(QDialog, ui_main.Ui_dlgMain):
     if err == 1:
       self.__USBCAN.VCI_StartCAN(self.__devType, self.__devIdx, self.__Chn)
       self.pushBtn_txdata.setDisabled(0)
+      self.pushBtn_startJump.setDisabled(0)
       self.__timer = threading.Timer(0.1, self.can_rx)
       self.__timer.start()
     elif err == 0:
@@ -227,6 +230,32 @@ class MainDlg(QDialog, ui_main.Ui_dlgMain):
     self.textEdit_recv.clear()
     
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  @pyqtSlot()
+  def on_pushBtn_startJump_clicked(self):
+    qs = self.lineEdit_TCID_1.text();  qs = qs.toUInt(16);  TC1 = qs[0]
+    qs = self.lineEdit_TCID_2.text();  qs = qs.toUInt(16);  TC2 = qs[0]
+    qs = self.lineEdit_TCID_3.text();  qs = qs.toUInt(16);  TC3 = qs[0]
+    qs = self.lineEdit_TCID_4.text();  qs = qs.toUInt(16);  TC4 = qs[0]
+    qs = self.lineEdit_TCID_5.text();  qs = qs.toUInt(16);  TC5 = qs[0]
+
+    qs = self.lineEdit_GPID_1.text();  qs = qs.toUInt(10);  GP1 = qs[0]
+    qs = self.lineEdit_GPID_2.text();  qs = qs.toUInt(10);  GP2 = qs[0]
+    qs = self.lineEdit_GPID_3.text();  qs = qs.toUInt(10);  GP3 = qs[0]
+    qs = self.lineEdit_GPID_4.text();  qs = qs.toUInt(10);  GP4 = qs[0]
+    qs = self.lineEdit_GPID_5.text();  qs = qs.toUInt(10);  GP5 = qs[0]
+
+    data = (ctypes.c_ubyte * 8)()
+    data[0] = 0x8E
+
+    canobj = ControlCAN.VCI_CAN_OBJ()
+    canobj.ID = GP1
+    canobj.RemoteFlag = 0  #1 远程 0 数据
+    canobj.ExternFlag = 0  #1 扩展 0 标准
+    canobj.DataLen    = 1
+    canobj.Data       = data
+    frameNum = self.__USBCAN.VCI_Transmit(self.__devType, self.__devIdx, self.__Chn, ctypes.addressof(canobj), 1)
+    
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   def can_rx(self):
     rxobj = ControlCAN.VCI_CAN_OBJ()
     res = self.__USBCAN.VCI_Receive(self.__devType, self.__devIdx, self.__Chn, ctypes.addressof(rxobj), 1000, 100);
@@ -236,6 +265,7 @@ class MainDlg(QDialog, ui_main.Ui_dlgMain):
       type   = rxobj.ExternFlag;  type   = (type==0)   and (u'标准帧') or (u'扩展帧')
       format = rxobj.RemoteFlag;  format = (format==0) and (u'数据帧') or (u'远程帧')
       id     = rxobj.ID
+      ts     = rxobj.TimeStamp;   ts = float(ts)/10000
       rx = 'ID: 0x' + ("%02X" %(id)) + ' ' + type + ' ' + format + ' ' + str(dl) + 'B:  '
 
       data = rxobj.Data
@@ -243,7 +273,8 @@ class MainDlg(QDialog, ui_main.Ui_dlgMain):
       for i in range(dl):
         s += "%02X " %(data[i])
 
-      self.textEdit_recv.insertPlainText(rx + s + '\r\n')
+      self.textEdit_recv.insertPlainText(rx + s)
+      self.textEdit_recv.insertPlainText('  time:' + str(ts) + 's \r\n')
 
     self.__timer = threading.Timer(0.1, self.can_rx)
     self.__timer.start()

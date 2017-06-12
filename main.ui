@@ -115,7 +115,7 @@
    <property name="geometry">
     <rect>
      <x>556</x>
-     <y>20</y>
+     <y>22</y>
      <width>48</width>
      <height>16</height>
     </rect>
@@ -128,7 +128,7 @@
    <property name="geometry">
     <rect>
      <x>698</x>
-     <y>20</y>
+     <y>22</y>
      <width>36</width>
      <height>16</height>
     </rect>
@@ -137,7 +137,7 @@
     <string>综保ID</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="lineEdit_GPID">
+  <widget class="QLineEdit" name="lineEdit_GPID_1">
    <property name="geometry">
     <rect>
      <x>740</x>
@@ -160,12 +160,12 @@
     </rect>
    </property>
   </widget>
-  <widget class="QLineEdit" name="lineEdit_TCID">
+  <widget class="QLineEdit" name="lineEdit_TCID_1">
    <property name="geometry">
     <rect>
      <x>610</x>
      <y>20</y>
-     <width>71</width>
+     <width>61</width>
      <height>20</height>
     </rect>
    </property>
@@ -524,12 +524,233 @@
     <string>波特率帮助</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="pushBtn_startJump">
+   <property name="geometry">
+    <rect>
+     <x>620</x>
+     <y>170</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>模拟故障</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_17">
+   <property name="geometry">
+    <rect>
+     <x>556</x>
+     <y>52</y>
+     <width>48</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>控制器ID</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_18">
+   <property name="geometry">
+    <rect>
+     <x>698</x>
+     <y>52</y>
+     <width>36</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>综保ID</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_TCID_2">
+   <property name="geometry">
+    <rect>
+     <x>610</x>
+     <y>50</y>
+     <width>61</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>05050605</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_GPID_2">
+   <property name="geometry">
+    <rect>
+     <x>740</x>
+     <y>50</y>
+     <width>31</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_19">
+   <property name="geometry">
+    <rect>
+     <x>698</x>
+     <y>82</y>
+     <width>36</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>综保ID</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_TCID_3">
+   <property name="geometry">
+    <rect>
+     <x>610</x>
+     <y>80</y>
+     <width>61</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>05050605</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_20">
+   <property name="geometry">
+    <rect>
+     <x>556</x>
+     <y>82</y>
+     <width>48</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>控制器ID</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_GPID_3">
+   <property name="geometry">
+    <rect>
+     <x>740</x>
+     <y>80</y>
+     <width>31</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_GPID_4">
+   <property name="geometry">
+    <rect>
+     <x>742</x>
+     <y>108</y>
+     <width>31</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_TCID_4">
+   <property name="geometry">
+    <rect>
+     <x>612</x>
+     <y>108</y>
+     <width>61</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>05050605</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_21">
+   <property name="geometry">
+    <rect>
+     <x>558</x>
+     <y>110</y>
+     <width>48</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>控制器ID</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_22">
+   <property name="geometry">
+    <rect>
+     <x>700</x>
+     <y>110</y>
+     <width>36</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>综保ID</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_GPID_5">
+   <property name="geometry">
+    <rect>
+     <x>742</x>
+     <y>138</y>
+     <width>31</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_TCID_5">
+   <property name="geometry">
+    <rect>
+     <x>612</x>
+     <y>138</y>
+     <width>61</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>05050605</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_23">
+   <property name="geometry">
+    <rect>
+     <x>558</x>
+     <y>140</y>
+     <width>48</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>控制器ID</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_24">
+   <property name="geometry">
+    <rect>
+     <x>700</x>
+     <y>140</y>
+     <width>36</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>综保ID</string>
+   </property>
+  </widget>
   <zorder>frame_3</zorder>
   <zorder>frame</zorder>
   <zorder>label_3</zorder>
   <zorder>label_4</zorder>
-  <zorder>lineEdit_GPID</zorder>
-  <zorder>lineEdit_TCID</zorder>
+  <zorder>lineEdit_GPID_1</zorder>
+  <zorder>lineEdit_TCID_1</zorder>
   <zorder>textEdit_recv</zorder>
   <zorder>pushBtn_clr</zorder>
   <zorder>lineEdit_AccCode</zorder>
@@ -548,11 +769,28 @@
   <zorder>frame_4</zorder>
   <zorder>label_16</zorder>
   <zorder>pushBtn_baudHelp</zorder>
+  <zorder>pushBtn_startJump</zorder>
+  <zorder>label_17</zorder>
+  <zorder>label_18</zorder>
+  <zorder>lineEdit_TCID_2</zorder>
+  <zorder>lineEdit_GPID_2</zorder>
+  <zorder>label_19</zorder>
+  <zorder>lineEdit_TCID_3</zorder>
+  <zorder>label_20</zorder>
+  <zorder>lineEdit_GPID_3</zorder>
+  <zorder>lineEdit_GPID_4</zorder>
+  <zorder>lineEdit_TCID_4</zorder>
+  <zorder>label_21</zorder>
+  <zorder>label_22</zorder>
+  <zorder>lineEdit_GPID_5</zorder>
+  <zorder>lineEdit_TCID_5</zorder>
+  <zorder>label_23</zorder>
+  <zorder>label_24</zorder>
  </widget>
  <tabstops>
   <tabstop>pushBtn_connect</tabstop>
-  <tabstop>lineEdit_TCID</tabstop>
-  <tabstop>lineEdit_GPID</tabstop>
+  <tabstop>lineEdit_TCID_1</tabstop>
+  <tabstop>lineEdit_GPID_1</tabstop>
   <tabstop>textEdit_recv</tabstop>
  </tabstops>
  <resources/>
