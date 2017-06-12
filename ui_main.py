@@ -25,7 +25,7 @@ except AttributeError:
 class Ui_dlgMain(object):
     def setupUi(self, dlgMain):
         dlgMain.setObjectName(_fromUtf8("dlgMain"))
-        dlgMain.resize(800, 480)
+        dlgMain.resize(800, 540)
         self.frame = QtGui.QFrame(dlgMain)
         self.frame.setGeometry(QtCore.QRect(0, 0, 531, 41))
         self.frame.setFrameShape(QtGui.QFrame.StyledPanel)
@@ -62,7 +62,7 @@ class Ui_dlgMain(object):
         self.lineEdit_GPID.setGeometry(QtCore.QRect(740, 20, 31, 20))
         self.lineEdit_GPID.setObjectName(_fromUtf8("lineEdit_GPID"))
         self.textEdit_recv = QtGui.QTextEdit(dlgMain)
-        self.textEdit_recv.setGeometry(QtCore.QRect(0, 260, 531, 221))
+        self.textEdit_recv.setGeometry(QtCore.QRect(0, 260, 531, 281))
         self.textEdit_recv.setObjectName(_fromUtf8("textEdit_recv"))
         self.lineEdit_TCID = QtGui.QLineEdit(dlgMain)
         self.lineEdit_TCID.setGeometry(QtCore.QRect(610, 20, 71, 20))
@@ -153,6 +153,9 @@ class Ui_dlgMain(object):
         self.label_16 = QtGui.QLabel(dlgMain)
         self.label_16.setGeometry(QtCore.QRect(10, 240, 91, 16))
         self.label_16.setObjectName(_fromUtf8("label_16"))
+        self.pushBtn_baudHelp = QtGui.QPushButton(dlgMain)
+        self.pushBtn_baudHelp.setGeometry(QtCore.QRect(220, 230, 75, 23))
+        self.pushBtn_baudHelp.setObjectName(_fromUtf8("pushBtn_baudHelp"))
         self.frame_3.raise_()
         self.frame.raise_()
         self.label_3.raise_()
@@ -176,6 +179,7 @@ class Ui_dlgMain(object):
         self.pushBtn_startCAN.raise_()
         self.frame_4.raise_()
         self.label_16.raise_()
+        self.pushBtn_baudHelp.raise_()
 
         self.retranslateUi(dlgMain)
         QtCore.QMetaObject.connectSlotsByName(dlgMain)
@@ -211,4 +215,5 @@ class Ui_dlgMain(object):
         self.lineEdit_Data.setText(_translate("dlgMain", "00 01 02 03 04 05 06 07", None))
         self.label_15.setText(_translate("dlgMain", "数据", None))
         self.label_16.setText(_translate("dlgMain", "接收到的数据", None))
+        self.pushBtn_baudHelp.setText(_translate("dlgMain", "波特率帮助", None))
 

@@ -19,6 +19,23 @@ class MainDlg(QDialog, ui_main.Ui_dlgMain):
   __devIdx  = None
   __Chn     = None
   __timer   = None
+  __baud    = '''
+            Time0    Time1
+10 Kbps      0x9F     0xFF
+20 Kbps      0x18     0x1C
+40 Kbps      0x87     0xFF
+50 Kbps      0x09     0x1C
+80 Kbps      0x83     0xFF
+100 Kbps     0x04     0x1C
+125 Kbps     0x03     0x1C
+200 Kbps     0x81     0xFA
+250 Kbps     0x01     0x1C
+400 Kbps     0x80     0xFA
+500 Kbps     0x00     0x1C
+666 Kbps     0x80     0xB6
+800 Kbps     0x00     0x16
+1000 Kbps    0x00     0x14
+'''
   
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   def __init__(self, parent=None):
@@ -96,6 +113,7 @@ class MainDlg(QDialog, ui_main.Ui_dlgMain):
         QMessageBox.information(self, u"错误",  u"找不到设备")
 
     elif self.pushBtn_connect.text() == u'关闭':
+      self.__timer.cancel()
       self.__USBCAN.VCI_CloseDevice(self.__devType, self.__devIdx)
       self.cmb_devType.setDisabled(0)
       self.cmb_devIndex.setDisabled(0)
@@ -200,9 +218,14 @@ class MainDlg(QDialog, ui_main.Ui_dlgMain):
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   @pyqtSlot()
+  def on_pushBtn_baudHelp_clicked(self):
+    self.textEdit_recv.insertPlainText(self.__baud)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  @pyqtSlot()
   def on_pushBtn_clr_clicked(self):
     self.textEdit_recv.clear()
-
+    
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   def can_rx(self):
     rxobj = ControlCAN.VCI_CAN_OBJ()

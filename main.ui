@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>480</height>
+    <height>540</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -156,7 +156,7 @@
      <x>0</x>
      <y>260</y>
      <width>531</width>
-     <height>221</height>
+     <height>281</height>
     </rect>
    </property>
   </widget>
@@ -511,6 +511,19 @@
     <string>接收到的数据</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="pushBtn_baudHelp">
+   <property name="geometry">
+    <rect>
+     <x>220</x>
+     <y>230</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>波特率帮助</string>
+   </property>
+  </widget>
   <zorder>frame_3</zorder>
   <zorder>frame</zorder>
   <zorder>label_3</zorder>
@@ -534,6 +547,7 @@
   <zorder>pushBtn_startCAN</zorder>
   <zorder>frame_4</zorder>
   <zorder>label_16</zorder>
+  <zorder>pushBtn_baudHelp</zorder>
  </widget>
  <tabstops>
   <tabstop>pushBtn_connect</tabstop>
