@@ -5,6 +5,7 @@ from PyQt4.QtCore import *
 
 import sys
 import threading
+import time
 import struct
 import ctypes
 import re
@@ -13,13 +14,15 @@ import ControlCAN
 
 class MainDlg(QDialog, ui_main.Ui_dlgMain):
   __USBCAN = None
+  __rcv_thread = None
   __DevTypeList = {"DEV_USBCAN"  : 3,
                    "DEV_USBCAN2" : 4 }
   __devType = None
   __devIdx  = None
   __Chn     = None
   __timer   = None
-  __baud    = '''
+  __baud    = \
+'''
             Time0    Time1
 10 Kbps      0x9F     0xFF
 20 Kbps      0x18     0x1C
@@ -89,6 +92,9 @@ class MainDlg(QDialog, ui_main.Ui_dlgMain):
     for i in range(x):
       self.cmb_devIndex.addItem(str(i))
 
+    self.__rcv_thread = threading.Thread(target = self.rcv_thread)
+    self.__rcv_thread.setDaemon(True)
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #自动关联的槽函数
   @pyqtSlot()
@@ -114,7 +120,6 @@ class MainDlg(QDialog, ui_main.Ui_dlgMain):
         QMessageBox.information(self, u"错误",  u"找不到设备")
 
     elif self.pushBtn_connect.text() == u'关闭':
-      self.__timer.cancel()
       self.__USBCAN.VCI_CloseDevice(self.__devType, self.__devIdx)
       self.cmb_devType.setDisabled(0)
       self.cmb_devIndex.setDisabled(0)
@@ -149,8 +154,8 @@ class MainDlg(QDialog, ui_main.Ui_dlgMain):
       self.__USBCAN.VCI_StartCAN(self.__devType, self.__devIdx, self.__Chn)
       self.pushBtn_txdata.setDisabled(0)
       self.pushBtn_startJump.setDisabled(0)
-      self.__timer = threading.Timer(0.1, self.can_rx)
-      self.__timer.start()
+      if not self.__rcv_thread.is_alive():
+        self.__rcv_thread.start()
     elif err == 0:
       QMessageBox.information(self, u"错误",  u"初始化失败")
     elif err == -1:
@@ -232,6 +237,12 @@ class MainDlg(QDialog, ui_main.Ui_dlgMain):
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   @pyqtSlot()
   def on_pushBtn_startJump_clicked(self):
+    canobj = ControlCAN.VCI_CAN_OBJ()
+    
+    canobj.RemoteFlag = 0  #1 远程 0 数据
+    canobj.ExternFlag = 0  #1 扩展 0 标准
+    data = (ctypes.c_ubyte * 8)()
+
     qs = self.lineEdit_TCID_1.text();  qs = qs.toUInt(16);  TC1 = qs[0]
     qs = self.lineEdit_TCID_2.text();  qs = qs.toUInt(16);  TC2 = qs[0]
     qs = self.lineEdit_TCID_3.text();  qs = qs.toUInt(16);  TC3 = qs[0]
@@ -243,41 +254,36 @@ class MainDlg(QDialog, ui_main.Ui_dlgMain):
     qs = self.lineEdit_GPID_3.text();  qs = qs.toUInt(10);  GP3 = qs[0]
     qs = self.lineEdit_GPID_4.text();  qs = qs.toUInt(10);  GP4 = qs[0]
     qs = self.lineEdit_GPID_5.text();  qs = qs.toUInt(10);  GP5 = qs[0]
-
-    data = (ctypes.c_ubyte * 8)()
+    
     data[0] = 0x8E
-
-    canobj = ControlCAN.VCI_CAN_OBJ()
+    data[1] = 0x01
     canobj.ID = GP1
-    canobj.RemoteFlag = 0  #1 远程 0 数据
-    canobj.ExternFlag = 0  #1 扩展 0 标准
-    canobj.DataLen    = 1
+    canobj.DataLen    = 2
     canobj.Data       = data
     frameNum = self.__USBCAN.VCI_Transmit(self.__devType, self.__devIdx, self.__Chn, ctypes.addressof(canobj), 1)
     
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  def can_rx(self):
+  def rcv_thread(self):
     rxobj = ControlCAN.VCI_CAN_OBJ()
-    res = self.__USBCAN.VCI_Receive(self.__devType, self.__devIdx, self.__Chn, ctypes.addressof(rxobj), 1000, 100);
-    if res > 0:
-      #print res
-      dl     = rxobj.DataLen;
-      type   = rxobj.ExternFlag;  type   = (type==0)   and (u'标准帧') or (u'扩展帧')
-      format = rxobj.RemoteFlag;  format = (format==0) and (u'数据帧') or (u'远程帧')
-      id     = rxobj.ID
-      ts     = rxobj.TimeStamp;   ts = float(ts)/10000
-      rx = 'ID: 0x' + ("%02X" %(id)) + ' ' + type + ' ' + format + ' ' + str(dl) + 'B:  '
+    while True:
+      #time.sleep(0.1)
+      res = self.__USBCAN.VCI_Receive(self.__devType, self.__devIdx, self.__Chn, ctypes.addressof(rxobj), 1000, 100);
+      if res > 0:
+        #print res
+        dl     = rxobj.DataLen;
+        type   = rxobj.ExternFlag;  type   = (type==0)   and (u'标准帧') or (u'扩展帧')
+        format = rxobj.RemoteFlag;  format = (format==0) and (u'数据帧') or (u'远程帧')
+        id     = rxobj.ID
+        ts     = rxobj.TimeStamp;   ts = float(ts)/10000
+        rx = 'ID: 0x' + ("%02X" %(id)) + ' ' + type + ' ' + format + ' ' + str(dl) + 'B:  '
 
-      data = rxobj.Data
-      s = ""
-      for i in range(dl):
-        s += "%02X " %(data[i])
+        data = rxobj.Data
+        s = ""
+        for i in range(dl):
+          s += "%02X " %(data[i])
 
-      self.textEdit_recv.insertPlainText(rx + s)
-      self.textEdit_recv.insertPlainText('  time:' + str(ts) + 's \r\n')
-
-    self.__timer = threading.Timer(0.1, self.can_rx)
-    self.__timer.start()
+        self.textEdit_recv.insertPlainText(rx + s)
+        self.textEdit_recv.insertPlainText('  time:' + str(ts) + 's \r\n')
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
