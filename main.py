@@ -264,26 +264,30 @@ class MainDlg(QDialog, ui_main.Ui_dlgMain):
     
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   def rcv_thread(self):
-    rxobj = ControlCAN.VCI_CAN_OBJ()
+    rx_objs = (ControlCAN.VCI_CAN_OBJ * 10)()
+    obj = ControlCAN.VCI_CAN_OBJ()
     while True:
-      #time.sleep(0.1)
-      res = self.__USBCAN.VCI_Receive(self.__devType, self.__devIdx, self.__Chn, ctypes.addressof(rxobj), 1000, 100);
+      time.sleep(0.1)
+      res = self.__USBCAN.VCI_Receive(self.__devType, self.__devIdx, self.__Chn, ctypes.addressof(rx_objs), 1000, 100);
       if res > 0:
         #print res
-        dl     = rxobj.DataLen;
-        type   = rxobj.ExternFlag;  type   = (type==0)   and (u'标准帧') or (u'扩展帧')
-        format = rxobj.RemoteFlag;  format = (format==0) and (u'数据帧') or (u'远程帧')
-        id     = rxobj.ID
-        ts     = rxobj.TimeStamp;   ts = float(ts)/10000
-        rx = 'ID: 0x' + ("%02X" %(id)) + ' ' + type + ' ' + format + ' ' + str(dl) + 'B:  '
+        for j in range(res):
+          obj = rx_objs[j]
 
-        data = rxobj.Data
-        s = ""
-        for i in range(dl):
-          s += "%02X " %(data[i])
+          dl     = obj.DataLen;
+          type   = obj.ExternFlag;  type   = (type==0)   and (u'标准帧') or (u'扩展帧')
+          format = obj.RemoteFlag;  format = (format==0) and (u'数据帧') or (u'远程帧')
+          id     = obj.ID
+          ts     = obj.TimeStamp;   ts = float(ts)/10000
+          data   = obj.Data
 
-        self.textEdit_recv.insertPlainText(rx + s)
-        self.textEdit_recv.insertPlainText('  time:' + str(ts) + 's \r\n')
+          s1 = 'ID: 0x' + ("%02X" %(id)) + ' ' + type + ' ' + format + ' ' + str(dl) + 'B:  '
+          s2 = ""
+          for i in range(dl):
+            s2 += "%02X " %(data[i])
+
+          self.textEdit_recv.insertPlainText(s1 + s2)
+          self.textEdit_recv.insertPlainText('  time:' + str(ts) + 's \r\n')
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
