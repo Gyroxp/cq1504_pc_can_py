@@ -262,17 +262,46 @@ class MainDlg(QDialog, ui_main.Ui_dlgMain):
     canobj.Data       = data
     frameNum = self.__USBCAN.VCI_Transmit(self.__devType, self.__devIdx, self.__Chn, ctypes.addressof(canobj), 1)
     
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##方式1: 用结构体数组进行接收。CAN接收多了就崩溃了
+#  def rcv_thread(self):
+#    rx_objs = (ControlCAN.VCI_CAN_OBJ * 1000)()
+#    obj = ControlCAN.VCI_CAN_OBJ()
+#    while True:
+#      time.sleep(0.1)
+#      res = self.__USBCAN.VCI_Receive(self.__devType, self.__devIdx, self.__Chn,
+#                                      ctypes.addressof(rx_objs), 1000, 100);
+#      if res > 0:
+#        #print res
+#        for j in range(res):
+#          obj = rx_objs[j]
+
+##方式2: 将结构体数组封装成一个新的结构体。接收几次还是会崩溃
+#  def rcv_thread(self):
+#    rx_objs = ControlCAN.EX_VCI_CAN_OBJ()
+#    obj = ControlCAN.VCI_CAN_OBJ()
+#    while True:
+#      time.sleep(0.1)
+#      res = self.__USBCAN.VCI_Receive(self.__devType, self.__devIdx, self.__Chn,
+#                                      ctypes.addressof(rx_objs), 1000, 100);
+#      if res > 0:
+#        #print res
+#        for j in range(res):
+#          obj = rx_objs.OBJ[j]
+
+#方式3: 定义缓冲区，并进行强制类型转换。同样也会崩溃。。。
   def rcv_thread(self):
-    rx_objs = (ControlCAN.VCI_CAN_OBJ * 10)()
+    buf = ctypes.create_string_buffer(ctypes.sizeof(ControlCAN.VCI_CAN_OBJ) * 1000)
+    rx_objs = ctypes.cast(buf, ctypes.POINTER(ControlCAN.EX_VCI_CAN_OBJ))   #强制转换。将第一参数进行转换，得到第二参数的指针
     obj = ControlCAN.VCI_CAN_OBJ()
     while True:
       time.sleep(0.1)
-      res = self.__USBCAN.VCI_Receive(self.__devType, self.__devIdx, self.__Chn, ctypes.addressof(rx_objs), 1000, 100);
+      res = self.__USBCAN.VCI_Receive(self.__devType, self.__devIdx, self.__Chn, 
+                                      rx_objs, 1000, 100);
       if res > 0:
         #print res
         for j in range(res):
-          obj = rx_objs[j]
+          obj = rx_objs.contents.OBJ[j]
 
           dl     = obj.DataLen;
           type   = obj.ExternFlag;  type   = (type==0)   and (u'标准帧') or (u'扩展帧')
@@ -288,8 +317,8 @@ class MainDlg(QDialog, ui_main.Ui_dlgMain):
 
           self.textEdit_recv.insertPlainText(s1 + s2)
           self.textEdit_recv.insertPlainText('  time:' + str(ts) + 's \r\n')
-
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 app = QApplication(sys.argv)
 mainDlg = MainDlg()

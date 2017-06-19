@@ -28,6 +28,11 @@ class VCI_CAN_OBJ(Structure):
   ("Reserved",    c_ubyte * 3)
   ]
 
+class EX_VCI_CAN_OBJ(Structure):
+  _fields_ = [
+  ("OBJ",          VCI_CAN_OBJ * 1000)
+  ]
+
 class VCI_CAN_STATUS(Structure):
   _fields_ = [
   ("ErrInterrupt", c_char),
